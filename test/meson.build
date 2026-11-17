@@ -1,10 +1,11 @@
+# [charset, suffix, needs shaping (mirroring/Arabic) support]
 tests = [
-  ['CapRTL', 'explicit'],
-  ['CapRTL', 'implicit'],
-  ['CapRTL', 'isolate'],
-  ['ISO8859-8', 'hebrew'],
-  ['UTF-8', 'persian'],
-  ['UTF-8', 'reordernsm'],
+  ['CapRTL', 'explicit', false],
+  ['CapRTL', 'implicit', true],
+  ['CapRTL', 'isolate', true],
+  ['ISO8859-8', 'hebrew', true],
+  ['UTF-8', 'persian', true],
+  ['UTF-8', 'reordernsm', true],
 ]
 
 test_runner = find_program('test-runner.py')
@@ -12,6 +13,9 @@ test_runner = find_program('test-runner.py')
 foreach t : tests
   charset = t[0]
   suffix = t[1]
+  if t[2] and not enable_shaping
+    continue
+  endif
   test_name = '@0@_@1@'.format(charset, suffix)
   input_file = files('test_@0@.input'.format(test_name))
   reference_file = files('test_@0@.reference'.format(test_name))
@@ -23,6 +27,12 @@ test_reorder_nsm = executable('test-reorder-nsm', 'test-reorder-nsm.c', fribidi_
   link_with: libfribidi,
 )
 test('reorder-nsm', test_reorder_nsm)
+
+test_shaping_option = executable('test-shaping-option', 'test-shaping-option.c', fribidi_unicode_version_h,
+  include_directories: incs,
+  link_with: libfribidi,
+)
+test('shaping-option', test_shaping_option)
 
 test_par_direction = executable('test-par-direction', 'test-par-direction.c', fribidi_unicode_version_h,
   include_directories: incs,

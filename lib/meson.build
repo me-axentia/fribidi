@@ -21,6 +21,12 @@ else
   fribidi_config.set('FRIBIDI_MSVC_BUILD_PLACEHOLDER', '#undef FRIBIDI_BUILT_WITH_MSVC')
 endif
 
+if enable_shaping
+  fribidi_config.set('FRIBIDI_NO_SHAPING_PLACEHOLDER', '#undef FRIBIDI_NO_SHAPING')
+else
+  fribidi_config.set('FRIBIDI_NO_SHAPING_PLACEHOLDER', '#define FRIBIDI_NO_SHAPING 1')
+endif
+
 fribidi_config_h = configure_file(input: files('fribidi-config.h.in'),
   output: 'fribidi-config.h',
   configuration: fribidi_config,
@@ -52,7 +58,6 @@ install_headers(fribidi_headers, subdir: 'fribidi')
 
 fribidi_sources = [
   'fribidi.c',
-  'fribidi-arabic.c',
   'fribidi-bidi.c',
   'fribidi-bidi-types.c',
   'fribidi-char-sets.c',
@@ -63,13 +68,19 @@ fribidi_sources = [
   'fribidi-char-sets-iso8859-8.c',
   'fribidi-char-sets-utf8.c',
   'fribidi-deprecated.c',
-  'fribidi-joining.c',
-  'fribidi-joining-types.c',
-  'fribidi-mirroring.c',
   'fribidi-brackets.c',
   'fribidi-run.c',
-  'fribidi-shape.c',
 ]
+
+if enable_shaping
+  fribidi_sources += [
+    'fribidi-arabic.c',
+    'fribidi-joining.c',
+    'fribidi-joining-types.c',
+    'fribidi-mirroring.c',
+    'fribidi-shape.c',
+  ]
+endif
 
 libfribidi = library('fribidi',
   fribidi_sources, fribidi_unicode_version_h, fribidi_config_h,

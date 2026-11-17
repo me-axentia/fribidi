@@ -20,4 +20,7 @@
 /* Define if fribidi was built with MSVC */
 @FRIBIDI_MSVC_BUILD_PLACEHOLDER@
 
+/* Define if fribidi was built without Arabic joining/shaping and mirroring */
+@FRIBIDI_NO_SHAPING_PLACEHOLDER@
+
 #endif /* FRIBIDI_CONFIG_H */

@@ -48,12 +48,18 @@ COMPRESSION='2'
 
 tabs = [
   ['bidi-type', files('unidata/UnicodeData.txt')],
-  ['joining-type', files('unidata/UnicodeData.txt', 'unidata/ArabicShaping.txt')],
-  ['arabic-shaping', files('unidata/UnicodeData.txt')],
-  ['mirroring', files('unidata/BidiMirroring.txt')],
   ['brackets', files('unidata/BidiBrackets.txt', 'unidata/UnicodeData.txt')],
   ['brackets-type', files('unidata/BidiBrackets.txt')],
 ]
+
+# Tables only needed for Arabic joining/shaping and mirroring
+if enable_shaping
+  tabs += [
+    ['joining-type', files('unidata/UnicodeData.txt', 'unidata/ArabicShaping.txt')],
+    ['arabic-shaping', files('unidata/UnicodeData.txt')],
+    ['mirroring', files('unidata/BidiMirroring.txt')],
+  ]
+endif
 
 generated_tab_include_files = []
 

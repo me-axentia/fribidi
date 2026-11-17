@@ -32,12 +32,21 @@
 #include <fribidi-char-sets-cap-rtl.h>
 
 #include <fribidi-unicode.h>
-#include <fribidi-mirroring.h>
+#ifndef FRIBIDI_NO_SHAPING
+# include <fribidi-mirroring.h>
+#endif /* !FRIBIDI_NO_SHAPING */
 #include <fribidi-bidi-types.h>
 
 #include <bidi-types.h>
 
 #include <stdio.h>
+
+#ifdef FRIBIDI_NO_SHAPING
+/* The mirroring table is not built, so treat no character as mirrored. */
+# define HAS_MIRROR_CHAR(ch) false
+#else /* !FRIBIDI_NO_SHAPING */
+# define HAS_MIRROR_CHAR(ch) fribidi_get_mirror_char ((ch), NULL)
+#endif /* !FRIBIDI_NO_SHAPING */
 
 enum
 {
@@ -98,7 +107,7 @@ init_cap_rtl (
 
 	caprtl_to_unicode[i] = FRIBIDI_UNICODE_CHARS;
 	mark[i] = 0;
-	if (fribidi_get_mirror_char (i, NULL))
+	if (HAS_MIRROR_CHAR (i))
 	  {
 	    DBG ("warning: I could not map mirroring character map to itself in CapRTL");
 	  }
@@ -116,7 +125,7 @@ init_cap_rtl (
 	count++;
       }
   for (i = 0; i < 0x10000 && count; i++)	/* Assign BMP chars to CapRTL entries */
-    if (!fribidi_get_mirror_char (i, NULL) && !(i < CAPRTL_CHARS && mark[i]))
+    if (!HAS_MIRROR_CHAR (i) && !(i < CAPRTL_CHARS && mark[i]))
       {
 	int j, k;
 	FriBidiCharType t = fribidi_get_bidi_type (i);

@@ -33,12 +33,14 @@
 #include "fribidi-flags.h"
 #include "fribidi-bidi-types.h"
 #include "fribidi-bidi.h"
-#include "fribidi-joining-types.h"
-#include "fribidi-joining.h"
-#include "fribidi-mirroring.h"
 #include "fribidi-brackets.h"
-#include "fribidi-arabic.h"
-#include "fribidi-shape.h"
+#ifndef FRIBIDI_NO_SHAPING
+# include "fribidi-joining-types.h"
+# include "fribidi-joining.h"
+# include "fribidi-mirroring.h"
+# include "fribidi-arabic.h"
+# include "fribidi-shape.h"
+#endif /* !FRIBIDI_NO_SHAPING */
 #include "fribidi-char-sets.h"
 
 #include "fribidi-begindecls.h"
@@ -87,6 +89,10 @@ fribidi_remove_bidi_marks (
  *
  * If NULL is passed as any of the the lists, the list is ignored and not
  * filled.
+ *
+ * If the library was built without shaping support (FRIBIDI_NO_SHAPING is
+ * defined in fribidi-config.h), visual_str is only reordered: no Arabic
+ * joining/shaping and no character mirroring is applied.
  *
  * Note that this function handles one-line paragraphs. For multi-
  * paragraph texts it is necessary to first split the text into

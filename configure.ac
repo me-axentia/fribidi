@@ -149,6 +149,19 @@ if test x$enable_deprecated = xno; then
 		  [Do not build deprecated functionality])
 fi
 
+# --disable-shaping
+AC_ARG_ENABLE(shaping,
+              AC_HELP_STRING([--disable-shaping],
+                             [do not build Arabic joining/shaping and character mirroring support]),,
+              enable_shaping=yes)
+if test x$enable_shaping = xno; then
+	FRIBIDI_NO_SHAPING_PLACEHOLDER="#define FRIBIDI_NO_SHAPING 1"
+else
+	FRIBIDI_NO_SHAPING_PLACEHOLDER="#undef FRIBIDI_NO_SHAPING"
+fi
+AC_SUBST(FRIBIDI_NO_SHAPING_PLACEHOLDER)
+AM_CONDITIONAL(ENABLE_SHAPING, test x$enable_shaping != xno)
+
 # define FRIBIDI_LIB_STATIC if in static mode
 if test "$enable_static" = "yes" ; then
 	FRIBIDI_CPPFLAGS="-DFRIBIDI_LIB_STATIC"

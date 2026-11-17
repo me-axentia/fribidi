@@ -162,8 +162,10 @@ fribidi_log2vis (
   fribidi_boolean private_V_to_L = false;
   fribidi_boolean private_embedding_levels = false;
   fribidi_boolean status = false;
+#ifndef FRIBIDI_NO_SHAPING
   FriBidiArabicProp local_ar_props[LOCAL_LIST_SIZE];
   FriBidiArabicProp *ar_props = NULL;
+#endif /* !FRIBIDI_NO_SHAPING */
   FriBidiLevel local_embedding_levels[LOCAL_LIST_SIZE];
   FriBidiCharType local_bidi_types[LOCAL_LIST_SIZE];
   FriBidiCharType *bidi_types = NULL;
@@ -252,6 +254,7 @@ fribidi_log2vis (
       */
       memcpy (visual_str, str, len * sizeof (*visual_str));
 
+#ifndef FRIBIDI_NO_SHAPING
       /* Arabic joining */
       if (len < LOCAL_LIST_SIZE)
         ar_props = local_ar_props;
@@ -263,6 +266,7 @@ fribidi_log2vis (
       fribidi_join_arabic (bidi_types, len, embedding_levels, ar_props);
 
       fribidi_shape (_fribidi_legacy_api_flags, embedding_levels, len, ar_props, visual_str);
+#endif /* !FRIBIDI_NO_SHAPING */
     }
 
   /* line breaking goes here, but we assume one line in this function */
@@ -291,8 +295,10 @@ out:
   if (private_embedding_levels && embedding_levels != local_embedding_levels)
     fribidi_free (embedding_levels);
 
+#ifndef FRIBIDI_NO_SHAPING
   if (ar_props && ar_props != local_ar_props)
     fribidi_free (ar_props);
+#endif /* !FRIBIDI_NO_SHAPING */
 
   if (bidi_types && bidi_types != local_bidi_types)
     fribidi_free (bidi_types);

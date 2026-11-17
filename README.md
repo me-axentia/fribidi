@@ -37,6 +37,22 @@ The latest version of GNU FriBidi may be found at:
 Start with running the [`autogen.sh`](./autogen.sh) script and follow the
 instructions. Alternatively use `meson`.
 
+### Building without shaping
+
+If you only need the bidi algorithm (embedding levels and reordering) and
+your renderer does its own Arabic shaping and mirroring (e.g. HarfBuzz), you
+can leave out the Arabic joining/shaping and mirroring code and tables:
+
+    meson setup build -Dshaping=false
+    # or
+    ./configure --disable-shaping
+
+`FRIBIDI_NO_SHAPING` is then defined in `fribidi-config.h`, and the joining,
+mirroring, Arabic and shaping API (`fribidi-joining*.h`,
+`fribidi-mirroring.h`, `fribidi-arabic.h` and `fribidi-shape.h`) is not
+available.  `fribidi_log2vis()` still works, but a requested `visual_str` is
+only reordered: no Arabic shaping and no character mirroring are applied.
+
 
 ## License
 

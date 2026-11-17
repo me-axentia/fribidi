@@ -17,14 +17,11 @@ pkginclude_HEADERS = $(libfribidi_la_headers)
 nodist_pkginclude_HEADERS = fribidi-config.h
 
 libfribidi_la_SOURCES =	\
-		arabic-misc.tab.i \
-		arabic-shaping.tab.i \
 		bidi-type.tab.i \
 		bidi-types.h \
 		common.h \
 		debug.h \
 		fribidi.c \
-		fribidi-arabic.c \
 		fribidi-bidi.c \
 		fribidi-bidi-types.c \
 		fribidi-char-sets.c \
@@ -41,33 +38,57 @@ libfribidi_la_SOURCES =	\
 		fribidi-char-sets-iso8859-8.h \
 		fribidi-char-sets-utf8.h \
 		fribidi-deprecated.c \
-		fribidi-joining.c \
-		fribidi-joining-types.c \
-		fribidi-mirroring.c \
 		fribidi-brackets.c \
 		fribidi-run.c \
-		fribidi-shape.c \
-		joining-type.tab.i \
-		joining-types.h \
-		mirroring.tab.i \
 		brackets.tab.i \
 		brackets-type.tab.i \
 		run.h
 
+shaping_sources = \
+		arabic-misc.tab.i \
+		arabic-shaping.tab.i \
+		fribidi-arabic.c \
+		fribidi-joining.c \
+		fribidi-joining-types.c \
+		fribidi-mirroring.c \
+		fribidi-shape.c \
+		joining-type.tab.i \
+		joining-types.h \
+		mirroring.tab.i
+
+if ENABLE_SHAPING
+libfribidi_la_SOURCES += $(shaping_sources)
+else
+# Keep the shaping sources in the tarball even when not building them.
+EXTRA_DIST += $(shaping_sources)
+endif
+
 libfribidi_la_CPPFLAGS = @FRIBIDI_CPPFLAGS@ -DFRIBIDI_BUILD
 
+SHAPING_GENERATEDSOURCES = \
+		arabic-shaping.tab.i \
+		joining-type.tab.i \
+		mirroring.tab.i
+
+# All generated sources can always be made (e.g. for "make dist"), but
+# only those needed by the configured build are built by default.
 GENERATEDSOURCES = \
 		fribidi-unicode-version.h \
-		arabic-shaping.tab.i \
 		bidi-type.tab.i \
-		joining-type.tab.i \
-		mirroring.tab.i \
 		brackets.tab.i \
-		brackets-type.tab.i 
+		brackets-type.tab.i \
+		$(SHAPING_GENERATEDSOURCES)
 
 BUILT_SOURCES = \
-		$(GENERATEDSOURCES) \
+		fribidi-unicode-version.h \
+		bidi-type.tab.i \
+		brackets.tab.i \
+		brackets-type.tab.i \
 		fribidi-config.h
+
+if ENABLE_SHAPING
+BUILT_SOURCES += $(SHAPING_GENERATEDSOURCES)
+endif
 
 $(GENERATEDSOURCES):
 	@(cd $(top_builddir)/gen.tab && \
@@ -81,7 +102,7 @@ gen:
 	$(RM) $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) $(BUILT_SOURCES)
 
-MAINTAINERCLEANFILES = $(BUILT_SOURCES)
+MAINTAINERCLEANFILES = $(GENERATEDSOURCES) fribidi-config.h
 
 $(top_builddir)/config.h: $(top_srcdir)/config.h.in
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) config.h
