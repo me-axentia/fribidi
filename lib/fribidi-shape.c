@@ -28,7 +28,9 @@
 #include "common.h"
 
 #include <fribidi-shape.h>
-#include <fribidi-mirroring.h>
+#ifndef FRIBIDI_NO_MIRRORING
+# include <fribidi-mirroring.h>
+#endif /* !FRIBIDI_NO_MIRRORING */
 #include <fribidi-arabic.h>
 
 
@@ -53,8 +55,10 @@ fribidi_shape (
   if (ar_props)
     fribidi_shape_arabic (flags, embedding_levels, len, ar_props, str);
 
+#ifndef FRIBIDI_NO_MIRRORING
   if (FRIBIDI_TEST_BITS (flags, FRIBIDI_FLAG_SHAPE_MIRRORING))
     fribidi_shape_mirroring (embedding_levels, len, str);
+#endif /* !FRIBIDI_NO_MIRRORING */
 }
 
 

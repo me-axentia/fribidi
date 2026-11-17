@@ -27,6 +27,12 @@ else
   fribidi_config.set('FRIBIDI_NO_SHAPING_PLACEHOLDER', '#define FRIBIDI_NO_SHAPING 1')
 endif
 
+if enable_mirroring
+  fribidi_config.set('FRIBIDI_NO_MIRRORING_PLACEHOLDER', '#undef FRIBIDI_NO_MIRRORING')
+else
+  fribidi_config.set('FRIBIDI_NO_MIRRORING_PLACEHOLDER', '#define FRIBIDI_NO_MIRRORING 1')
+endif
+
 fribidi_config_h = configure_file(input: files('fribidi-config.h.in'),
   output: 'fribidi-config.h',
   configuration: fribidi_config,
@@ -77,9 +83,12 @@ if enable_shaping
     'fribidi-arabic.c',
     'fribidi-joining.c',
     'fribidi-joining-types.c',
-    'fribidi-mirroring.c',
     'fribidi-shape.c',
   ]
+endif
+
+if enable_mirroring
+  fribidi_sources += ['fribidi-mirroring.c']
 endif
 
 libfribidi = library('fribidi',

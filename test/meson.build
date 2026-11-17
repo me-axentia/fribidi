@@ -1,11 +1,11 @@
-# [charset, suffix, needs shaping (mirroring/Arabic) support]
+# [charset, suffix, needs Arabic shaping, needs mirroring]
 tests = [
-  ['CapRTL', 'explicit', false],
-  ['CapRTL', 'implicit', true],
-  ['CapRTL', 'isolate', true],
-  ['ISO8859-8', 'hebrew', true],
-  ['UTF-8', 'persian', true],
-  ['UTF-8', 'reordernsm', true],
+  ['CapRTL', 'explicit', false, false],
+  ['CapRTL', 'implicit', false, true],
+  ['CapRTL', 'isolate', false, true],
+  ['ISO8859-8', 'hebrew', false, true],
+  ['UTF-8', 'persian', true, false],
+  ['UTF-8', 'reordernsm', true, false],
 ]
 
 test_runner = find_program('test-runner.py')
@@ -13,7 +13,7 @@ test_runner = find_program('test-runner.py')
 foreach t : tests
   charset = t[0]
   suffix = t[1]
-  if t[2] and not enable_shaping
+  if (t[2] and not enable_shaping) or (t[3] and not enable_mirroring)
     continue
   endif
   test_name = '@0@_@1@'.format(charset, suffix)

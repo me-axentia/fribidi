@@ -1,6 +1,6 @@
 /* FriBidi
  * test-shaping-option.c - check fribidi_log2vis() against the shaping
- * build option
+ * and mirroring build options
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,34 +20,42 @@
  * For licensing issues, contact <fribidi.license@gmail.com>.
  */
 
-/* With shaping support, brackets in a right-to-left run are mirrored.
- * Built with -Dshaping=false / --disable-shaping, the visual string is
- * only reordered.  Levels and position maps must be the same either way,
+/* Brackets in a right-to-left run are mirrored unless the library was
+ * built with -Dmirroring=false / --disable-mirroring.  Arabic letters are
+ * shaped to presentation forms unless it was built with -Dshaping=false /
+ * --disable-shaping.  Levels and position maps must be the same either way,
  * and must not depend on whether a visual string is requested. */
 
 #include <stdio.h>
 #include <string.h>
 #include <fribidi.h>
 
-#define LEN 3
+#define LEN 5
 
 int
 main (void)
 {
-  /* "(" ALEF ")" in a right-to-left paragraph */
-  const FriBidiChar input[LEN] = { 0x0028, 0x05D0, 0x0029 };
+  /* "(" ALEF ")" BEH BEH in a right-to-left paragraph */
+  const FriBidiChar input[LEN] = { 0x0028, 0x05D0, 0x0029, 0x0628, 0x0628 };
+  const FriBidiChar expected_visual[LEN] = {
 #ifdef FRIBIDI_NO_SHAPING
-  const FriBidiChar expected_visual[LEN] = { 0x0029, 0x05D0, 0x0028 };
+    0x0628, 0x0628,		/* BEH BEH, unshaped */
 #else
-  const FriBidiChar expected_visual[LEN] = { 0x0028, 0x05D0, 0x0029 };
+    0xFE90, 0xFE91,		/* BEH final form, BEH initial form */
 #endif
-  const FriBidiStrIndex expected_l2v[LEN] = { 2, 1, 0 };
-  const FriBidiLevel expected_levels[LEN] = { 1, 1, 1 };
+#ifdef FRIBIDI_NO_MIRRORING
+    0x0029, 0x05D0, 0x0028	/* ")" ALEF "(" */
+#else
+    0x0028, 0x05D0, 0x0029	/* "(" ALEF ")" */
+#endif
+  };
+  const FriBidiStrIndex expected_l2v[LEN] = { 4, 3, 2, 1, 0 };
+  const FriBidiLevel expected_levels[LEN] = { 1, 1, 1, 1, 1 };
   FriBidiChar visual[LEN];
   FriBidiStrIndex l2v[LEN], v2l[LEN], l2v_nv[LEN], v2l_nv[LEN];
   FriBidiLevel levels[LEN], levels_nv[LEN];
   FriBidiParType base_dir;
-  int failed = 0;
+  int i, failed = 0;
 
   base_dir = FRIBIDI_PAR_RTL;
   if (!fribidi_log2vis (input, LEN, &base_dir, visual, l2v, v2l, levels))
@@ -66,9 +74,10 @@ main (void)
 
   if (memcmp (visual, expected_visual, sizeof visual) != 0)
     {
-      fprintf (stderr, "unexpected visual string: %04X %04X %04X\n",
-	       (unsigned) visual[0], (unsigned) visual[1],
-	       (unsigned) visual[2]);
+      fprintf (stderr, "unexpected visual string:");
+      for (i = 0; i < LEN; i++)
+	fprintf (stderr, " %04X", (unsigned) visual[i]);
+      fprintf (stderr, "\n");
       failed = 1;
     }
   if (memcmp (l2v, expected_l2v, sizeof l2v) != 0

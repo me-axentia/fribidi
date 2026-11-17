@@ -66,6 +66,7 @@ no_deprecated = not get_option('deprecated')
 cdata.set('FRIBIDI_NO_DEPRECATED', no_deprecated)
 
 enable_shaping = get_option('shaping')
+enable_mirroring = get_option('mirroring')
 
 # write config.h
 config_h = configure_file(output: 'config.h', configuration: cdata)

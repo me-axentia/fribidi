@@ -37,10 +37,12 @@
 #ifndef FRIBIDI_NO_SHAPING
 # include "fribidi-joining-types.h"
 # include "fribidi-joining.h"
-# include "fribidi-mirroring.h"
 # include "fribidi-arabic.h"
 # include "fribidi-shape.h"
 #endif /* !FRIBIDI_NO_SHAPING */
+#ifndef FRIBIDI_NO_MIRRORING
+# include "fribidi-mirroring.h"
+#endif /* !FRIBIDI_NO_MIRRORING */
 #include "fribidi-char-sets.h"
 
 #include "fribidi-begindecls.h"
@@ -90,9 +92,12 @@ fribidi_remove_bidi_marks (
  * If NULL is passed as any of the the lists, the list is ignored and not
  * filled.
  *
- * If the library was built without shaping support (FRIBIDI_NO_SHAPING is
- * defined in fribidi-config.h), visual_str is only reordered: no Arabic
- * joining/shaping and no character mirroring is applied.
+ * If the library was built without Arabic shaping support
+ * (FRIBIDI_NO_SHAPING is defined in fribidi-config.h), no Arabic
+ * joining/shaping is applied to visual_str.  If it was built without
+ * mirroring support (FRIBIDI_NO_MIRRORING is defined), no character
+ * mirroring is applied.  Embedding levels and position maps are not
+ * affected by either.
  *
  * Note that this function handles one-line paragraphs. For multi-
  * paragraph texts it is necessary to first split the text into

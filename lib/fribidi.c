@@ -266,6 +266,11 @@ fribidi_log2vis (
       fribidi_join_arabic (bidi_types, len, embedding_levels, ar_props);
 
       fribidi_shape (_fribidi_legacy_api_flags, embedding_levels, len, ar_props, visual_str);
+#elif !defined(FRIBIDI_NO_MIRRORING)
+      /* No Arabic shaping built, but mirroring is: do just that part of
+         fribidi_shape(). */
+      if (FRIBIDI_TEST_BITS (_fribidi_legacy_api_flags, FRIBIDI_FLAG_SHAPE_MIRRORING))
+        fribidi_shape_mirroring (embedding_levels, len, visual_str);
 #endif /* !FRIBIDI_NO_SHAPING */
     }
 

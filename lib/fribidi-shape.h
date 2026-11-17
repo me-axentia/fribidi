@@ -47,6 +47,8 @@
  * FRIBIDI_FLAG_SHAPE_.  Of these, only FRIBIDI_FLAG_SHAPE_MIRRORING is on
  * in FRIBIDI_FLAGS_DEFAULT.  For details of the Arabic-specific flags see
  * fribidi_shape_arabic.  If ar_props is NULL, no Arabic shaping is performed.
+ * If the library was built without mirroring support (FRIBIDI_NO_MIRRORING
+ * is defined in fribidi-config.h), FRIBIDI_FLAG_SHAPE_MIRRORING is ignored.
  *
  * Feel free to do your own shaping before or after calling this function,
  * but you should take care of embedding levels yourself then.

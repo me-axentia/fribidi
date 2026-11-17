@@ -32,21 +32,21 @@
 #include <fribidi-char-sets-cap-rtl.h>
 
 #include <fribidi-unicode.h>
-#ifndef FRIBIDI_NO_SHAPING
+#ifndef FRIBIDI_NO_MIRRORING
 # include <fribidi-mirroring.h>
-#endif /* !FRIBIDI_NO_SHAPING */
+#endif /* !FRIBIDI_NO_MIRRORING */
 #include <fribidi-bidi-types.h>
 
 #include <bidi-types.h>
 
 #include <stdio.h>
 
-#ifdef FRIBIDI_NO_SHAPING
+#ifdef FRIBIDI_NO_MIRRORING
 /* The mirroring table is not built, so treat no character as mirrored. */
 # define HAS_MIRROR_CHAR(ch) false
-#else /* !FRIBIDI_NO_SHAPING */
+#else /* !FRIBIDI_NO_MIRRORING */
 # define HAS_MIRROR_CHAR(ch) fribidi_get_mirror_char ((ch), NULL)
-#endif /* !FRIBIDI_NO_SHAPING */
+#endif /* !FRIBIDI_NO_MIRRORING */
 
 enum
 {

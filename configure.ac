@@ -152,7 +152,7 @@ fi
 # --disable-shaping
 AC_ARG_ENABLE(shaping,
               AC_HELP_STRING([--disable-shaping],
-                             [do not build Arabic joining/shaping and character mirroring support]),,
+                             [do not build Arabic joining/shaping support]),,
               enable_shaping=yes)
 if test x$enable_shaping = xno; then
 	FRIBIDI_NO_SHAPING_PLACEHOLDER="#define FRIBIDI_NO_SHAPING 1"
@@ -161,6 +161,19 @@ else
 fi
 AC_SUBST(FRIBIDI_NO_SHAPING_PLACEHOLDER)
 AM_CONDITIONAL(ENABLE_SHAPING, test x$enable_shaping != xno)
+
+# --disable-mirroring
+AC_ARG_ENABLE(mirroring,
+              AC_HELP_STRING([--disable-mirroring],
+                             [do not build character mirroring support]),,
+              enable_mirroring=yes)
+if test x$enable_mirroring = xno; then
+	FRIBIDI_NO_MIRRORING_PLACEHOLDER="#define FRIBIDI_NO_MIRRORING 1"
+else
+	FRIBIDI_NO_MIRRORING_PLACEHOLDER="#undef FRIBIDI_NO_MIRRORING"
+fi
+AC_SUBST(FRIBIDI_NO_MIRRORING_PLACEHOLDER)
+AM_CONDITIONAL(ENABLE_MIRRORING, test x$enable_mirroring != xno)
 
 # define FRIBIDI_LIB_STATIC if in static mode
 if test "$enable_static" = "yes" ; then

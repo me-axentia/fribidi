@@ -50,24 +50,34 @@ shaping_sources = \
 		fribidi-arabic.c \
 		fribidi-joining.c \
 		fribidi-joining-types.c \
-		fribidi-mirroring.c \
 		fribidi-shape.c \
 		joining-type.tab.i \
-		joining-types.h \
+		joining-types.h
+
+mirroring_sources = \
+		fribidi-mirroring.c \
 		mirroring.tab.i
 
+# Optional sources are kept in the tarball even when not built.
 if ENABLE_SHAPING
 libfribidi_la_SOURCES += $(shaping_sources)
 else
-# Keep the shaping sources in the tarball even when not building them.
 EXTRA_DIST += $(shaping_sources)
+endif
+
+if ENABLE_MIRRORING
+libfribidi_la_SOURCES += $(mirroring_sources)
+else
+EXTRA_DIST += $(mirroring_sources)
 endif
 
 libfribidi_la_CPPFLAGS = @FRIBIDI_CPPFLAGS@ -DFRIBIDI_BUILD
 
 SHAPING_GENERATEDSOURCES = \
 		arabic-shaping.tab.i \
-		joining-type.tab.i \
+		joining-type.tab.i
+
+MIRRORING_GENERATEDSOURCES = \
 		mirroring.tab.i
 
 # All generated sources can always be made (e.g. for "make dist"), but
@@ -77,7 +87,8 @@ GENERATEDSOURCES = \
 		bidi-type.tab.i \
 		brackets.tab.i \
 		brackets-type.tab.i \
-		$(SHAPING_GENERATEDSOURCES)
+		$(SHAPING_GENERATEDSOURCES) \
+		$(MIRRORING_GENERATEDSOURCES)
 
 BUILT_SOURCES = \
 		fribidi-unicode-version.h \
@@ -88,6 +99,10 @@ BUILT_SOURCES = \
 
 if ENABLE_SHAPING
 BUILT_SOURCES += $(SHAPING_GENERATEDSOURCES)
+endif
+
+if ENABLE_MIRRORING
+BUILT_SOURCES += $(MIRRORING_GENERATEDSOURCES)
 endif
 
 $(GENERATEDSOURCES):

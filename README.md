@@ -37,21 +37,30 @@ The latest version of GNU FriBidi may be found at:
 Start with running the [`autogen.sh`](./autogen.sh) script and follow the
 instructions. Alternatively use `meson`.
 
-### Building without shaping
+### Building without shaping or mirroring
 
-If you only need the bidi algorithm (embedding levels and reordering) and
-your renderer does its own Arabic shaping and mirroring (e.g. HarfBuzz), you
-can leave out the Arabic joining/shaping and mirroring code and tables:
+If you only need the bidi algorithm (embedding levels and reordering), you
+can leave out the Arabic joining/shaping support, the character mirroring
+support, or both, together with their tables:
 
-    meson setup build -Dshaping=false
+    meson setup build -Dshaping=false -Dmirroring=false
     # or
-    ./configure --disable-shaping
+    ./configure --disable-shaping --disable-mirroring
 
-`FRIBIDI_NO_SHAPING` is then defined in `fribidi-config.h`, and the joining,
-mirroring, Arabic and shaping API (`fribidi-joining*.h`,
-`fribidi-mirroring.h`, `fribidi-arabic.h` and `fribidi-shape.h`) is not
-available.  `fribidi_log2vis()` still works, but a requested `visual_str` is
-only reordered: no Arabic shaping and no character mirroring are applied.
+The two options are independent:
+
+* `shaping=false` (`--disable-shaping`) defines `FRIBIDI_NO_SHAPING` in
+  `fribidi-config.h` and leaves out the joining, Arabic and shaping API
+  (`fribidi-joining*.h`, `fribidi-arabic.h` and `fribidi-shape.h`).
+* `mirroring=false` (`--disable-mirroring`) defines `FRIBIDI_NO_MIRRORING`
+  and leaves out the mirroring API (`fribidi-mirroring.h`).  When shaping
+  is built, `fribidi_shape()` then ignores `FRIBIDI_FLAG_SHAPE_MIRRORING`.
+
+`fribidi_log2vis()` is always available.  A requested `visual_str` is
+reordered, but Arabic shaping and character mirroring are only applied if
+they were built.  Leave mirroring enabled unless your renderer mirrors
+characters such as brackets in right-to-left text itself (as HarfBuzz
+does), or right-to-left text will show them reversed.
 
 
 ## License

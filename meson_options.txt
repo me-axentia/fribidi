@@ -1,7 +1,9 @@
 option('deprecated', type : 'boolean', value : true,
   description: 'Build deprecated functionality')
 option('shaping', type : 'boolean', value : true,
-  description: 'Build Arabic joining/shaping and character mirroring support')
+  description: 'Build Arabic joining/shaping support')
+option('mirroring', type : 'boolean', value : true,
+  description: 'Build character mirroring support')
 option('docs', type : 'boolean', value : true,
   description: 'Build documentation')
 option('bin', type : 'boolean', value : true,

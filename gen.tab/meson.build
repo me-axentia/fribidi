@@ -52,11 +52,17 @@ tabs = [
   ['brackets-type', files('unidata/BidiBrackets.txt')],
 ]
 
-# Tables only needed for Arabic joining/shaping and mirroring
+# Tables only needed for Arabic joining/shaping
 if enable_shaping
   tabs += [
     ['joining-type', files('unidata/UnicodeData.txt', 'unidata/ArabicShaping.txt')],
     ['arabic-shaping', files('unidata/UnicodeData.txt')],
+  ]
+endif
+
+# Table only needed for character mirroring
+if enable_mirroring
+  tabs += [
     ['mirroring', files('unidata/BidiMirroring.txt')],
   ]
 endif
